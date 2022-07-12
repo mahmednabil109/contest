@@ -14,6 +14,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/sirupsen/logrus"
 
+	"github.com/linuxboot/contest/pkg/loggerhook"
 	"github.com/linuxboot/contest/pkg/xcontext"
 	"github.com/linuxboot/contest/pkg/xcontext/bundles"
 	"github.com/linuxboot/contest/pkg/xcontext/logger"
@@ -84,5 +85,9 @@ func NewContext(logLevel logger.Level, opts ...bundles.Option) xcontext.Context 
 		prometheusadapter.New(prometheusRegistry, prometheusRegistry),
 		cfg.Tracer,
 		nil, nil)
+
+	if cfg.HttpLoggerAddr != "" {
+		entry.Logger.AddHook(loggerhook.NewHttpHook(cfg.HttpLoggerAddr))
+	}
 	return ctx
 }
